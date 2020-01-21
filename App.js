@@ -4,8 +4,8 @@ import EmergencyWindow from './emergency';
 import { registerRootComponent } from "expo";
 import { Provider, Appbar } from "react-native-paper";
 import WindowChooser from './drawer';
-import {View} from "react-native";
-
+import { View } from "react-native";
+import { useKeepAwake } from "expo-keep-awake";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -28,16 +28,18 @@ export default class App extends React.Component {
 
 
     return <Provider>
-      <Appbar.Header>
-        <Appbar.Content title="Sankatmochan" subtitle={subtitle} >
+      <WrapperToKeepAwake>
+        <Appbar.Header>
+          <Appbar.Content title="Sankatmochan" subtitle={subtitle} >
 
-        </Appbar.Content>
-      </Appbar.Header>
+          </Appbar.Content>
+        </Appbar.Header>
 
 
-      <WindowChooser handleChoice={this.handleChoice.bind(this)} />
+        <WindowChooser handleChoice={this.handleChoice.bind(this)} />
 
-      {area}
+        {area}
+      </WrapperToKeepAwake>
     </Provider>
 
 
@@ -46,7 +48,12 @@ export default class App extends React.Component {
 
 }
 
-
+function WrapperToKeepAwake({ children }) {
+  useKeepAwake();
+  return <>
+    {children}
+  </>
+}
 
 
 registerRootComponent(App);

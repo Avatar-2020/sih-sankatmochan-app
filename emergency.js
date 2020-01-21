@@ -3,7 +3,7 @@
 import React, { Component } from "react";
 
 
-import { View,  Text } from 'react-native';
+import { View, Text } from 'react-native';
 import { Camera } from "expo-camera";
 import * as Location from "expo-location";
 import * as Permission from "expo-permissions";
@@ -12,7 +12,9 @@ import { Headline } from "react-native-paper";
 import { Button } from "react-native-paper";
 
 
-const STAGE = "dev";
+const STAGE = "production";
+
+const SUBMIT_URL = "https://a3u55uwxa6.execute-api.us-east-1.amazonaws.com/test/accident";
 
 export default class EmergencyWindow extends Component {
     constructor(props) {
@@ -71,16 +73,19 @@ export default class EmergencyWindow extends Component {
             }).then(async uri => {
                 console.log("Cached file Info : ", uri);
                 this.setState({ statusText: "Video Recorded" });
-                const content = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+                let content;
+                content = await FileSystem.readAsStringAsync(uri.uri, { encoding: FileSystem.EncodingType.Base64 });
                 const payload = {
                     loc: this.state.position,
                     deviceId: this.state.deviceId,
                     video: content
                 }
+                console.log("payload is ready");
+
                 console.log("Sending all the data in cloud");
                 this.setState({ statusText: "Sending data in cloud" });
                 if (STAGE !== "dev") {
-                    fetch("url", {
+                    fetch(SUBMIT_URL, {
                         method: "post",
                         headers: {
                             "Content-Type": "application/json"
